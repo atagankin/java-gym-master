@@ -2,7 +2,6 @@ package ru.yandex.practicum.gym;
 
 import java.util.*;
 
-
 public class Timetable {
 
     private final Map<DayOfWeek, Map<TimeOfDay, List<TrainingSession>>> timetable;
@@ -36,7 +35,7 @@ public class Timetable {
                 List<TrainingSession> dailyList = dailyTimeTable.values().stream()
                         .flatMap(List::stream)
                         .toList();
-                
+
                 isSlotAviable = dailyList.stream()
                         .filter(x -> x.getCoach().equals(coach))
                         .noneMatch(p -> p.getReducedStart() <= trgtEnd && p.getReducedEnd() > trgtStart);
