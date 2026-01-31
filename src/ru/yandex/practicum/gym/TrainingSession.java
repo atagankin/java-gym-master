@@ -38,28 +38,21 @@ public class TrainingSession {
 
     /**
      * Возвращает int : количество минут с 00:00 до времени старта тренировки
-     * @return
+     * @return int
      */
     public int getReducedStart() {
-        return timeOfDay.getHours()*60 + timeOfDay.getMinutes();
+        return timeOfDay.getHours() * 60 + timeOfDay.getMinutes();
     }
 
     /**
      * Возвращает int : количество минут с 00:00 до времени окончания тренировки
-     * @return
+     * @return int
      */
     public int getReducedEnd() {
-        return timeOfDay.getHours()*60 + timeOfDay.getMinutes() + group.getDuration();
+        return timeOfDay.getHours() * 60 + timeOfDay.getMinutes() + group.getDuration();
     }
 
     public static Comparator<TrainingSession> trainingSessionTimeComparator() {
         return Comparator.comparingInt(TrainingSession::getReducedStart);
-    }
-
-    @Override
-    public String toString() {
-        return "( Тренировка. Тренер = " + coach.getSurname() + ", группа = " + group.getTitle() + ", дата = "
-                + dayOfWeek + ", время = " + timeOfDay + ", dtbeg = " + this.getReducedStart() + ", dtend = "
-                + this.getReducedEnd()+ ")";
     }
 }
