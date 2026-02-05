@@ -6,10 +6,12 @@ public class Timetable {
 
     private final Map<DayOfWeek, Map<TimeOfDay, List<TrainingSession>>> timetable;
     private final Map<DayOfWeek, Set<TrainingSession>> timetableCache;
+    private final HashMap<Coach, Integer> coachesCounter;
 
     public Timetable() {
         timetable = new HashMap<>();
         timetableCache = new HashMap<>();
+        coachesCounter = new HashMap<>();
         // Инициализируем все дни недели
         for (DayOfWeek day: DayOfWeek.values()) {
             timetable.put(day, new TreeMap<>());
@@ -23,7 +25,7 @@ public class Timetable {
      * @param coach - тренер
      * @param trgtStart - время начала окна для проверки в формате количества минут от 00:00
      * @param trgtEnd - время окончания окна для проверки в формате количества минут от 00:00
-     * @return
+     * @return true для свободного слота и false - для занятого
      */
     public boolean isCoachFree(DayOfWeek dayOfWeek, Coach coach, int trgtStart, int trgtEnd) {
         boolean isSlotAviable = true;
@@ -68,6 +70,7 @@ public class Timetable {
                 timetable.put(inputDay, trainingSlot);
                 timetableCache.get(inputDay).add(trainingSession);
             }
+            coachesCounter.put(coach, coachesCounter.getOrDefault(coach, 0) + 1);
         }
     }
 
@@ -79,28 +82,15 @@ public class Timetable {
 
     public List<TrainingSession> getTrainingSessionsForDayAndTime(DayOfWeek dayOfWeek, TimeOfDay timeOfDay) {
         //как реализовать, тоже непонятно, но сложность должна быть О(1)
-        if (timetable.get(dayOfWeek).containsKey(timeOfDay)) {
-            return timetable.get(dayOfWeek).get(timeOfDay);
-        }
-        return null;
+        return timetable.get(dayOfWeek).getOrDefault(timeOfDay, null);
     }
 
     public List<CounterOfTrainings> getCountByCoaches() {
-        HashMap<Coach, CounterOfTrainings> coachMap = new HashMap<>();
-
-        for (Set<TrainingSession> trainingsSet: timetableCache.values()) {
-            for (TrainingSession t: trainingsSet) {
-                Coach coach = t.getCoach();
-                if (!coachMap.containsKey(coach)) {
-                    CounterOfTrainings counter = new CounterOfTrainings(coach);
-                    coachMap.put(coach, counter);
-                }
-                coachMap.get(coach).addSession();
-            }
+        List<CounterOfTrainings> coachStatistic = new ArrayList<>();
+        for (Map.Entry<Coach, Integer> entry : coachesCounter.entrySet()) {
+            CounterOfTrainings counter = new CounterOfTrainings(entry.getKey(), entry.getValue());
+            coachStatistic.add(counter);
         }
-
-        List<CounterOfTrainings> coachStatistic = new ArrayList<>(coachMap.values());
-
         coachStatistic.sort(CounterOfTrainings.counterOfTrainingsComparator().reversed());
         return coachStatistic;
     }
