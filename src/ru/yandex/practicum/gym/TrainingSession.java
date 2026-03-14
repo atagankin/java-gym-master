@@ -1,5 +1,7 @@
 package ru.yandex.practicum.gym;
 
+import java.util.Comparator;
+
 public class TrainingSession {
 
     //группа
@@ -32,5 +34,25 @@ public class TrainingSession {
 
     public TimeOfDay getTimeOfDay() {
         return timeOfDay;
+    }
+
+    /**
+     * Возвращает int : количество минут с 00:00 до времени старта тренировки
+     * @return int
+     */
+    public int getReducedStart() {
+        return timeOfDay.getHours() * 60 + timeOfDay.getMinutes();
+    }
+
+    /**
+     * Возвращает int : количество минут с 00:00 до времени окончания тренировки
+     * @return int
+     */
+    public int getReducedEnd() {
+        return timeOfDay.getHours() * 60 + timeOfDay.getMinutes() + group.getDuration();
+    }
+
+    public static Comparator<TrainingSession> trainingSessionTimeComparator() {
+        return Comparator.comparingInt(TrainingSession::getReducedStart);
     }
 }
